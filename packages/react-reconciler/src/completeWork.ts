@@ -1,5 +1,6 @@
 import {
 	appendInitialChild,
+	Container,
 	createInstance,
 	createTextInstance
 } from 'hostConfig';
@@ -24,7 +25,7 @@ export const completeWork = (wip: FiberNode) => {
 				// 1. 构建 DOM
 				const instance = createInstance(
 					wip.type,
-					newProps
+					// newProps
 				);
 				// 2. 将 DOM 插入到 DOM 树中
 				appendAllChildren(instance, wip);
@@ -56,7 +57,7 @@ export const completeWork = (wip: FiberNode) => {
 };
 
 function appendAllChildren(
-	parent: FiberNode,
+	parent: Container,
 	wip: FiberNode
 ) {
 	let node = wip.child;

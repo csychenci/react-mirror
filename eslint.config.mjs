@@ -10,13 +10,16 @@ import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
 export default defineConfig([
   tseslint.configs.recommended,
   {
-    files: ["**/*.{js,mjs,cjs,ts}"], plugins: { js }, extends: ["js/recommended"], rules:{
+    files: ["**/*.{js,mjs,cjs,ts,d.ts}"], plugins: { js }, extends: ["js/recommended"], rules: {
       // ...eslintConfigPrettier,
         "prettier/prettier": "error",
         "no-case-declarations": "off",
         "no-constant-condition": "off",
         "@typescript-eslint/ban-ts-comment": "off",
-      "@typescript-eslint/no-explicit-any": "off"
+      "@typescript-eslint/no-explicit-any": "off",
+      "no-unused-vars": "off", // 完全关闭规则
+      "@typescript-eslint/no-unused-vars": "off", // 针对 TypeScript，
+      "no-undef": "off"
       }
     
   },
