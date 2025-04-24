@@ -1,11 +1,15 @@
 import { beginWork } from './beginWork';
+import { commitMutationEffects } from './commitWork';
 import { completeWork } from './completeWork';
 import {
 	createWorkInProgress,
 	FiberNode,
 	FiberRootNode
 } from './fiber';
-import { MutationMask, NoFlags } from './fiberFlags';
+import {
+	MutationMask,
+	NoFlags
+} from './fiberFlags';
 import { HostRoot } from './workTags';
 
 let workInProgress: FiberNode | null = null;
@@ -64,31 +68,35 @@ function renderRoot(root: FiberRootNode) {
 }
 
 function commitRoot(root: FiberRootNode) {
-	const finishedWork = root.finishedWork
+	const finishedWork = root.finishedWork;
 	if (finishedWork === null) {
-		return
+		return;
 	}
 
 	if (__DEV__) {
-		console.warn("commit 阶段开始", finishedWork)
+		console.warn('commit 阶段开始', finishedWork);
 	}
 
 	// 重置
-	root.finishedWork = null
+	root.finishedWork = null;
 
 	// 判断是否存在3个子阶段需要执行的操作
 	// 1. root 的 flags 与 root 的 subtreeFlags 是否包含 MutationMask，包含的话就存在这三个子阶段需要执行的操作
-	const subtreeHasFlags = (finishedWork.subtreeFlags & MutationMask) !== NoFlags
-	const rootHasEffect = (finishedWork.flags & MutationMask) !== NoFlags
+	const subtreeHasFlags =
+		(finishedWork.subtreeFlags & MutationMask) !==
+		NoFlags;
+	const rootHasEffect =
+		(finishedWork.flags & MutationMask) !==
+		NoFlags;
 	if (subtreeHasFlags || rootHasEffect) {
 		// beforeMutation
 		// Mutation
-		root.current = finishedWork
+		commitMutationEffects(finishedWork);
+		root.current = finishedWork;
 		// layout
 	} else {
-		root.current = finishedWork
+		root.current = finishedWork;
 	}
-
 }
 
 function workLoop() {

@@ -35,33 +35,43 @@ export const jsx = (
 	let ref: Ref = null;
 	for (const prop in config) {
 		const val = config[prop];
-		switch (props) {
-			case 'key':
-				if (val !== undefined) {
-					key = '' + val;
-				}
-				break;
-			case 'ref':
-				if (val !== undefined) {
-					ref = val;
-				}
-				break;
-			case {}.hasOwnProperty.call(config, prop):
-				props[prop] = val;
-				break;
-			default:
-				break;
+		if (prop === 'key') {
+			if (val !== undefined) {
+				key = '' + val;
+			}
+			continue;
+		}
+		if (prop === 'ref') {
+			if (val !== undefined) {
+				ref = val;
+			}
+			continue;
+		}
+		if ({}.hasOwnProperty.call(config, prop)) {
+			props[prop] = val;
 		}
 	}
-	const maybeChildrenLength =
-		maybeChildren.length;
-	if (maybeChildrenLength) {
-		if (maybeChildrenLength === 1) {
-			props.children = maybeChildren[0];
-		} else {
-			props.children = maybeChildren;
-		}
-	}
+	// if (props.children) {
+	// 	const childrenLength = props.children.length;
+	// 	console.log('maybeChildren', maybeChildren);
+	// 	if (childrenLength) {
+	// 		if (childrenLength === 1) {
+	// 			props.children = props.children[0];
+	// 		} else {
+	// 			props.children = props.children;
+	// 		}
+	// 	}
+	// }
+	// const maybeChildrenLength =
+	// 	maybeChildren.length;
+	// console.log("maybeChildren", maybeChildren)
+	// if (maybeChildrenLength) {
+	// 	if (maybeChildrenLength === 1) {
+	// 		props.children = maybeChildren[0];
+	// 	} else {
+	// 		props.children = maybeChildren;
+	// 	}
+	// }
 	return ReactElement(type, key, ref, props);
 };
 

@@ -7,10 +7,12 @@ import {
 import {
 	HostComponent,
 	HostRoot,
-	HostText
+	HostText,
+	FunctionComponent
 } from './workTags';
 import { mountChildFibers } from './childFiber';
 import { reconcileChildFibers } from './childFiber';
+import { renderWithHooks } from './fiberHooks';
 
 // 递归中的递阶段
 
@@ -23,6 +25,8 @@ export const beginWork = (wip: FiberNode) => {
 			return updateHostComponent(wip);
 		case HostText:
 			return null;
+		case FunctionComponent:
+			return updateFunctionComponent(wip);
 		default:
 			if (__DEV__) {
 				console.warn('beginWork未实现的类型');
@@ -78,4 +82,10 @@ function reconcileChildren(
 			children
 		);
 	}
+}
+
+function updateFunctionComponent(wip: FiberNode) {
+	const nextChildren = renderWithHooks(wip);
+	reconcileChildren(wip, nextChildren);
+	return wip.child;
 }

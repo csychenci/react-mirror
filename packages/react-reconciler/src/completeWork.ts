@@ -8,7 +8,8 @@ import { FiberNode } from './fiber';
 import {
 	HostRoot,
 	HostComponent,
-	HostText
+	HostText,
+	FunctionComponent
 } from './workTags';
 import { NoFlags } from './fiberFlags';
 
@@ -24,7 +25,7 @@ export const completeWork = (wip: FiberNode) => {
 			} else {
 				// 1. 构建 DOM
 				const instance = createInstance(
-					wip.type,
+					wip.type
 					// newProps
 				);
 				// 2. 将 DOM 插入到 DOM 树中
@@ -48,6 +49,9 @@ export const completeWork = (wip: FiberNode) => {
 		case HostRoot:
 			bubbleProperties(wip);
 			return null;
+		case FunctionComponent:
+			bubbleProperties(wip);
+			return null;
 		default:
 			if (__DEV__) {
 				console.warn('未处理的completeWork', wip);
@@ -61,6 +65,7 @@ function appendAllChildren(
 	wip: FiberNode
 ) {
 	let node = wip.child;
+	console.log('appendAllChildren', parent, wip);
 	while (node !== null) {
 		if (
 			node?.tag === HostComponent ||
