@@ -51,17 +51,17 @@ export const jsx = (
 			props[prop] = val;
 		}
 	}
-	// if (props.children) {
-	// 	const childrenLength = props.children.length;
-	// 	console.log('maybeChildren', maybeChildren);
-	// 	if (childrenLength) {
-	// 		if (childrenLength === 1) {
-	// 			props.children = props.children[0];
-	// 		} else {
-	// 			props.children = props.children;
-	// 		}
-	// 	}
-	// }
+	if (props.children) {
+		const childrenLength = props.children.length;
+		console.log('maybeChildren', maybeChildren);
+		if (childrenLength) {
+			if (childrenLength === 1) {
+				props.children = props.children[0];
+			} else {
+				props.children = props.children;
+			}
+		}
+	}
 	// const maybeChildrenLength =
 	// 	maybeChildren.length;
 	// console.log("maybeChildren", maybeChildren)

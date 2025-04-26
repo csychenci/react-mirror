@@ -31,6 +31,7 @@ export class FiberNode {
 	flags: Flags;
 	subtreeFlags: Flags;
 	updateQueue: unknown;
+	deletions: FiberNode[] | null;
 
 	constructor(
 		tag: WorkTag,
@@ -65,6 +66,7 @@ export class FiberNode {
 
 		this.flags = NoFlags; // 副作用
 		this.subtreeFlags = NoFlags; // 子树的副作用
+		this.deletions = null; // 需要删除的 fiberNode
 	}
 }
 
@@ -109,6 +111,7 @@ export const createWorkInProgress = (
 		// 清除副作用
 		wip.flags = NoFlags;
 		wip.subtreeFlags = NoFlags;
+		wip.deletions = null;
 	}
 
 	wip.type = current.type;
