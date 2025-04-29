@@ -1,4 +1,7 @@
-import { Props, ReactElementType } from 'shared/ReactType';
+import {
+	Props,
+	ReactElementType
+} from 'shared/ReactType';
 import {
 	createFiberFromElement,
 	createWorkInProgress,
@@ -6,14 +9,20 @@ import {
 } from './fiber';
 import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols';
 import { HostText } from './workTags';
-import { ChildDeletion, Placement } from './fiberFlags';
+import {
+	ChildDeletion,
+	Placement
+} from './fiberFlags';
 
 function ChildReconciler(
 	shouldTrackSideEffects: boolean
 ) {
-	function deleteChild(returnFiber: FiberNode, childToDelete: FiberNode) {
+	function deleteChild(
+		returnFiber: FiberNode,
+		childToDelete: FiberNode
+	) {
 		if (!shouldTrackSideEffects) {
-			return
+			return;
 		}
 		const deletions = returnFiber.deletions;
 		if (deletions === null) {
@@ -32,18 +41,28 @@ function ChildReconciler(
 		work: if (currentFiber !== null) {
 			// update
 			if (currentFiber.key === key) {
-				if (element.$$typeof === REACT_ELEMENT_TYPE) {
-					if (currentFiber.type === element.type) {
+				if (
+					element.$$typeof === REACT_ELEMENT_TYPE
+				) {
+					if (
+						currentFiber.type === element.type
+					) {
 						// type 相同，可以复用
-						const existing = useFiber(currentFiber, element.props);
-						existing.return = returnFiber
+						const existing = useFiber(
+							currentFiber,
+							element.props
+						);
+						existing.return = returnFiber;
 						return existing;
 					}
 					deleteChild(returnFiber, currentFiber);
 					break work;
 				} else {
 					if (__DEV__) {
-						console.warn('未实现的react类型', element);
+						console.warn(
+							'未实现的react类型',
+							element
+						);
 						break work;
 					}
 				}
@@ -68,7 +87,9 @@ function ChildReconciler(
 			// update
 			if (currentFiber.tag === HostText) {
 				// 类型没变，可以复用
-				const existing = useFiber(currentFiber, { content });
+				const existing = useFiber(currentFiber, {
+					content
+				});
 				existing.return = returnFiber;
 				return existing;
 			}
@@ -153,8 +174,14 @@ function ChildReconciler(
 	};
 }
 
-function useFiber(fiber: FiberNode, pendingProps: Props): FiberNode {
-	const clone = createWorkInProgress(fiber, pendingProps);
+function useFiber(
+	fiber: FiberNode,
+	pendingProps: Props
+): FiberNode {
+	const clone = createWorkInProgress(
+		fiber,
+		pendingProps
+	);
 	clone.index = 0;
 	clone.sibling = null;
 	return clone;

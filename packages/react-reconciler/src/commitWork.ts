@@ -71,75 +71,94 @@ const commitMutationEffectsOnFiber = (
 	if ((flags & ChildDeletion) !== NoFlags) {
 		const deletions = finishedWork.deletions;
 		if (deletions !== null) {
-			deletions.forEach(childDeletion => {
+			deletions.forEach((childDeletion) => {
 				commitDeletion(childDeletion);
-			})
+			});
 		}
 		finishedWork.flags &= ~ChildDeletion; // 从 flags 中移除 Update
 	}
 };
 
-function commitDeletion(childToDelete: FiberNode) {
+function commitDeletion(
+	childToDelete: FiberNode
+) {
 	let rootHostNode: FiberNode | null = null;
 	// 递归子树
 
-	commitNestedComponent(childToDelete, unmountFiber => {
-		switch (unmountFiber.tag) {
-			case HostComponent:
-				if (rootHostNode === null) {
-					rootHostNode = unmountFiber
-				}
-				return
-			case HostText:
-				if (rootHostNode === null) {
-					rootHostNode = unmountFiber
-				}
-				return
-			case FunctionComponent:
-				return
-			default:
-				if (__DEV__) {
-					console.warn('未处理的 unmount 类型', unmountFiber)
-				}
-				break
+	commitNestedComponent(
+		childToDelete,
+		(unmountFiber) => {
+			switch (unmountFiber.tag) {
+				case HostComponent:
+					if (rootHostNode === null) {
+						rootHostNode = unmountFiber;
+					}
+					return;
+				case HostText:
+					if (rootHostNode === null) {
+						rootHostNode = unmountFiber;
+					}
+					return;
+				case FunctionComponent:
+					return;
+				default:
+					if (__DEV__) {
+						console.warn(
+							'未处理的 unmount 类型',
+							unmountFiber
+						);
+					}
+					break;
+			}
 		}
-	})
+	);
 
 	// 移除 rootHostNode 的 DOM
 	if (rootHostNode !== null) {
-		const hostParent = getHostParent(childToDelete)
+		const hostParent = getHostParent(
+			childToDelete
+		);
 		if (hostParent !== null) {
-			removeChild((rootHostNode as FiberNode).stateNode, hostParent)
+			removeChild(
+				(rootHostNode as FiberNode).stateNode,
+				hostParent
+			);
 		}
 	}
 
-	childToDelete.return = null
-	childToDelete.child = null
+	childToDelete.return = null;
+	childToDelete.child = null;
 }
 
-function commitNestedComponent(root: FiberNode, onCommitUnmount: (fiber: FiberNode) => void) {
+function commitNestedComponent(
+	root: FiberNode,
+	onCommitUnmount: (fiber: FiberNode) => void
+) {
 	let node = root;
 	while (true) {
-		onCommitUnmount(node)
+		onCommitUnmount(node);
 		if (node.child !== null) {
-			node.child.return = node
-			node = node.child
-			continue
+			node.child.return = node;
+			node = node.child;
+			continue;
 		}
 		if (node === root) {
 			// 终止条件
-			return
+			return;
 		}
 
 		while (node.sibling === null) {
-			if (node.return === null || node.return === root) {
-				return
+			if (
+				node.return === null ||
+				node.return === root
+			) {
+				return;
 			}
 			// 向上归
-			node = node.return
+			node = node.return;
 		}
-		node.sibling.return = node.return
-		node = node.sibling
+		node.sibling.return = node.return;
+		node = node.sibling;
 	}
 }
 

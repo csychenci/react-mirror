@@ -5,8 +5,13 @@ import ReactDOM from 'react-dom/client'
 function App(props: { title: string }) {
   console.log("App", props.title)
   const [count, setCount] = useState(100)
-  window.setCount = setCount
-  return <div>{count > 10 ? "aaa" : count}</div>
+  return (
+		<div
+			onClickCapture={() => setCount(count + 1)}
+		>
+			{count}
+		</div>
+	);
 }
 
 console.log("App", App.toString(), <App title="Hello World" />)

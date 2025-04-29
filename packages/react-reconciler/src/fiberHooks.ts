@@ -62,19 +62,28 @@ const HooksDispatcherOnUpdate: Dispatcher = {
 	useState: updateState
 };
 
-function updateState<State>(
-): [State, Dispatch<State>] {
+function updateState<State>(): [
+	State,
+	Dispatch<State>
+] {
 	// 找到当前 useState 对应的 hook 数据
 	const hook = updateWorkInProgressHook();
-	const queue = hook.updateQueue as UpdateQueue<State>,
+	const queue =
+			hook.updateQueue as UpdateQueue<State>,
 		pending = queue.shared.pending;
 
 	if (pending !== null) {
-		const { memoizedState } = processUpdateQueue(hook.memoizedState, pending)
+		const { memoizedState } = processUpdateQueue(
+			hook.memoizedState,
+			pending
+		);
 		hook.memoizedState = memoizedState;
 	}
 
-	return [hook.memoizedState, queue.dispatch as Dispatch<State>];
+	return [
+		hook.memoizedState,
+		queue.dispatch as Dispatch<State>
+	];
 }
 
 function mountState<State>(
@@ -141,21 +150,22 @@ function updateWorkInProgressHook(): Hook {
 	let nextCurrentHook: Hook | null = null;
 	if (currentHook === null) {
 		// 这是 fc update 时的第一个 hook
-		const current = currentlyRenderingFiber?.alternate
+		const current =
+			currentlyRenderingFiber?.alternate;
 		/**
-			 *  current 是 currentlyRenderingFiber 的 currentFiber
-			 *  1. 如果 current 为 null，说明是 mount 阶段，
-			 * 	   但是这是 update 阶段，所以不应该进入到这里，这里是处理一些错误的边界情况
-			 *  2. 如果 current 不为 null，则取得 current 的 memoizedState
-			*/
+		 *  current 是 currentlyRenderingFiber 的 currentFiber
+		 *  1. 如果 current 为 null，说明是 mount 阶段，
+		 * 	   但是这是 update 阶段，所以不应该进入到这里，这里是处理一些错误的边界情况
+		 *  2. 如果 current 不为 null，则取得 current 的 memoizedState
+		 */
 		if (current !== null) {
-			nextCurrentHook = current?.memoizedState
+			nextCurrentHook = current?.memoizedState;
 		} else {
-			nextCurrentHook = null
+			nextCurrentHook = null;
 		}
 	} else {
 		// 这是 fc update 时的后续 hook
-		nextCurrentHook = currentHook.next
+		nextCurrentHook = currentHook.next;
 	}
 
 	if (nextCurrentHook === null) {
@@ -165,16 +175,18 @@ function updateWorkInProgressHook(): Hook {
 		 * 在本次更新中，currentHook 指向 useState3，而 currentHook.next 指向是 null
 		 * 这种情况下应该报错
 		 */
-		throw new Error(`组件${currentlyRenderingFiber?.type}本次执行时的hook比上次多`)
+		throw new Error(
+			`组件${currentlyRenderingFiber?.type}本次执行时的hook比上次多`
+		);
 	}
 
-	currentHook = nextCurrentHook
+	currentHook = nextCurrentHook;
 
 	const newHook: Hook = {
 		memoizedState: currentHook?.memoizedState,
 		updateQueue: currentHook?.updateQueue,
 		next: null
-	}
+	};
 
 	if (workInProgressHook === null) {
 		// mount时并且是第一个 hook
@@ -192,5 +204,5 @@ function updateWorkInProgressHook(): Hook {
 		workInProgressHook = newHook;
 	}
 
-	return workInProgressHook
+	return workInProgressHook;
 }
