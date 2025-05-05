@@ -85,14 +85,15 @@ function recordHostChildrenToDelete(
 	unmountFiber: FiberNode
 ) {
 	// 1. 找到第一个 root host 节点
-	let lastOne = childrenToDelete[childrenToDelete.length - 1]
+	const lastOne =
+		childrenToDelete[childrenToDelete.length - 1];
 	if (!lastOne) {
-		childrenToDelete.push(unmountFiber)
+		childrenToDelete.push(unmountFiber);
 	} else {
 		let node = lastOne.sibling;
 		while (node !== null) {
 			if (unmountFiber === node) {
-				childrenToDelete.push(unmountFiber)
+				childrenToDelete.push(unmountFiber);
 			}
 			node = node.sibling;
 		}
@@ -103,7 +104,7 @@ function recordHostChildrenToDelete(
 function commitDeletion(
 	childToDelete: FiberNode
 ) {
-	const rootChildrenToDelete: FiberNode[] = []
+	const rootChildrenToDelete: FiberNode[] = [];
 	// 递归子树
 
 	commitNestedComponent(
@@ -114,13 +115,19 @@ function commitDeletion(
 					// if (rootHostNode === null) {
 					// 	rootHostNode = unmountFiber;
 					// }
-					recordHostChildrenToDelete(rootChildrenToDelete, unmountFiber)
+					recordHostChildrenToDelete(
+						rootChildrenToDelete,
+						unmountFiber
+					);
 					return;
 				case HostText:
 					// if (rootHostNode === null) {
 					// 	rootHostNode = unmountFiber;
 					// }
-					recordHostChildrenToDelete(rootChildrenToDelete, unmountFiber)
+					recordHostChildrenToDelete(
+						rootChildrenToDelete,
+						unmountFiber
+					);
 					return;
 				case FunctionComponent:
 					return;
