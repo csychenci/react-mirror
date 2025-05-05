@@ -21,7 +21,7 @@ export const createInstance = (
 		element as unknown as DOMElement,
 		props
 	);
-	return element as DOMElement;
+	return element;
 };
 
 export const appendInitialChild = (

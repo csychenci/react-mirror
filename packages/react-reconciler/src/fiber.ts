@@ -5,6 +5,7 @@ import {
 	Ref
 } from 'shared/ReactType';
 import {
+	Fragment,
 	FunctionComponent,
 	HostComponent,
 	WorkTag
@@ -40,7 +41,7 @@ export class FiberNode {
 	) {
 		// 实例属性
 		this.tag = tag;
-		this.key = key;
+		this.key = key || null;
 		this.stateNode = null; // HostComponent: <div> Dom
 		this.type = null; // FunctionComponent: Component () => {}
 
@@ -144,5 +145,17 @@ export function createFiberFromElement(
 		key
 	);
 	fiber.type = type;
+	return fiber;
+}
+
+export function createFiberFromFragment(
+	elements: any[],
+	key: Key
+): FiberNode {
+	const fiber = new FiberNode(
+		Fragment,
+		elements,
+		key
+	);
 	return fiber;
 }

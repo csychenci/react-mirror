@@ -8,7 +8,8 @@ import {
 	HostComponent,
 	HostRoot,
 	HostText,
-	FunctionComponent
+	FunctionComponent,
+	Fragment
 } from './workTags';
 import { mountChildFibers } from './childFiber';
 import { reconcileChildFibers } from './childFiber';
@@ -27,6 +28,8 @@ export const beginWork = (wip: FiberNode) => {
 			return null;
 		case FunctionComponent:
 			return updateFunctionComponent(wip);
+		case Fragment:
+			return updateFragment(wip);
 		default:
 			if (__DEV__) {
 				console.warn('beginWork未实现的类型');
@@ -35,6 +38,12 @@ export const beginWork = (wip: FiberNode) => {
 	}
 	return null;
 };
+
+function updateFragment(wip: FiberNode) {
+	const nextChildren = wip.pendingProps;
+	reconcileChildren(wip, nextChildren);
+	return wip.child;
+}
 
 function updateHostRoot(wip: FiberNode) {
 	const baseState = wip.memoizedState;

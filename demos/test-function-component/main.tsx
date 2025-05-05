@@ -21,6 +21,8 @@ function App(props: { title: string }) {
 		<ul
 			onClickCapture={() => setCount(count + 1)}
 		>
+			<li key="5">5</li>
+			<li key="6">6</li>
 			{arr}
 		</ul>
 	);
