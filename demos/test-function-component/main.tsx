@@ -19,11 +19,14 @@ function App(props: { title: string }) {
 				];
 	return (
 		<ul
-			onClickCapture={() => setCount(count + 1)}
+			onClick={() => {
+				setCount((count) => count + 1);
+				setCount((count) => count + 1);
+				setCount((count) => count + 1);
+				setCount((count) => count + 1);
+			}}
 		>
-			<li key="5">5</li>
-			<li key="6">6</li>
-			{arr}
+			{count}
 		</ul>
 	);
 }
