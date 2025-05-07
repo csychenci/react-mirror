@@ -11,14 +11,27 @@ import {
 	MutationMask,
 	NoFlags
 } from './fiberFlags';
-import { getHighestPriorityLane, Lane, markRootFinished, mergeLanes, NoLane, SyncLane } from './fiberLanes';
-import { flushSyncCallbacks, scheduleSyncCallback } from './syncTaskQueue';
+import {
+	getHighestPriorityLane,
+	Lane,
+	markRootFinished,
+	mergeLanes,
+	NoLane,
+	SyncLane
+} from './fiberLanes';
+import {
+	flushSyncCallbacks,
+	scheduleSyncCallback
+} from './syncTaskQueue';
 import { HostRoot } from './workTags';
 
 let workInProgress: FiberNode | null = null;
 let wipRenderLane: Lane = NoLane;
 
-function prepareFreshStack(root: FiberRootNode, lane: Lane) {
+function prepareFreshStack(
+	root: FiberRootNode,
+	lane: Lane
+) {
 	workInProgress = createWorkInProgress(
 		root.current,
 		{}
@@ -32,31 +45,50 @@ export function scheduleUpdateOnFiber(
 ) {
 	// 调度功能
 	const root = markUpdateFromFiberToRoot(fiber);
-	markRootUpdated(root, lane)
-	ensureRootIsScheduled(root)
+	markRootUpdated(root, lane);
+	ensureRootIsScheduled(root);
 }
 
 // 调度阶段入口
-function ensureRootIsScheduled(root: FiberRootNode) {
-	const updateLane = getHighestPriorityLane(root.pendingLanes)
+function ensureRootIsScheduled(
+	root: FiberRootNode
+) {
+	const updateLane = getHighestPriorityLane(
+		root.pendingLanes
+	);
 	if (updateLane === NoLane) {
 		// 没有 lane 代表没有 update
-		return
+		return;
 	}
 	if (updateLane === SyncLane) {
 		// 同步优先级 用微任务调度
 		if (__DEV__) {
-			console.log('在微任务中调度 优先级：', updateLane)
+			console.log(
+				'在微任务中调度 优先级：',
+				updateLane
+			);
 		}
-		scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root, updateLane))
-		scheduleMicroTask(flushSyncCallbacks)
+		scheduleSyncCallback(
+			performSyncWorkOnRoot.bind(
+				null,
+				root,
+				updateLane
+			)
+		);
+		scheduleMicroTask(flushSyncCallbacks);
 	} else {
 		// 其他优先级 用宏任务调度
 	}
 }
 
-function markRootUpdated(root: FiberRootNode, lane: Lane) {
-	root.pendingLanes = mergeLanes(root.pendingLanes, lane);
+function markRootUpdated(
+	root: FiberRootNode,
+	lane: Lane
+) {
+	root.pendingLanes = mergeLanes(
+		root.pendingLanes,
+		lane
+	);
 }
 
 function markUpdateFromFiberToRoot(
@@ -75,16 +107,24 @@ function markUpdateFromFiberToRoot(
 	return null;
 }
 
-function performSyncWorkOnRoot(root: FiberRootNode, updateLane: Lane) {
-	const nextLane = getHighestPriorityLane(root.pendingLanes)
+function performSyncWorkOnRoot(
+	root: FiberRootNode,
+	updateLane: Lane
+) {
+	const nextLane = getHighestPriorityLane(
+		root.pendingLanes
+	);
 	if (nextLane !== updateLane) {
 		// 1. 其他比 Synclane 低的优先级
 		// 2. NoLane
-		ensureRootIsScheduled(root)
-		return
+		ensureRootIsScheduled(root);
+		return;
 	}
 	if (__DEV__) {
-		console.warn('render 阶段开始', root.pendingLanes)
+		console.warn(
+			'render 阶段开始',
+			root.pendingLanes
+		);
 	}
 	// 初始化
 	prepareFreshStack(root, updateLane);
@@ -122,7 +162,9 @@ function commitRoot(root: FiberRootNode) {
 	const lane = root.finishedLane;
 
 	if (lane === NoLane && __DEV__) {
-		console.error('commit 阶段 finishedLane 不应该为 NoLane')
+		console.error(
+			'commit 阶段 finishedLane 不应该为 NoLane'
+		);
 	}
 
 	// 重置

@@ -13,7 +13,11 @@ import {
 } from './updateQueue';
 import { Action } from 'shared/ReactType';
 import { scheduleUpdateOnFiber } from './workLoop';
-import { requestUpdateLane, Lane, NoLane } from './fiberLanes';
+import {
+	requestUpdateLane,
+	Lane,
+	NoLane
+} from './fiberLanes';
 
 let currentlyRenderingFiber: FiberNode | null =
 	null;
@@ -31,7 +35,10 @@ interface Hook {
 	next: Hook | null;
 }
 
-export function renderWithHooks(wip: FiberNode, lane: Lane) {
+export function renderWithHooks(
+	wip: FiberNode,
+	lane: Lane
+) {
 	// 设置当前正在渲染的fiber
 	currentlyRenderingFiber = wip;
 	wip.memoizedState = null;

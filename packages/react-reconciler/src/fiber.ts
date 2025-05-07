@@ -12,7 +12,12 @@ import {
 } from './workTags';
 import { Flags, NoFlags } from './fiberFlags';
 import { Container } from 'hostConfig';
-import { Lane, Lanes, NoLane, NoLanes } from './fiberLanes';
+import {
+	Lane,
+	Lanes,
+	NoLane,
+	NoLanes
+} from './fiberLanes';
 
 export class FiberNode {
 	type: any;

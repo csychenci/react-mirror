@@ -41,10 +41,10 @@ export const enqueueUpdate = <State>(
 ) => {
 	const pending = updateQueue.shared.pending;
 	if (pending === null) {
-		update.next = update
+		update.next = update;
 	} else {
-		update.next = pending.next
-		pending.next = update
+		update.next = pending.next;
+		pending.next = update;
 	}
 	updateQueue.shared.pending = update;
 };
@@ -59,21 +59,22 @@ export const processUpdateQueue = <State>(
 	> = { memoizedState: baseState };
 	if (pendingUpdate !== null) {
 		// 第一个 update
-		let first = pendingUpdate.next;
+		const first = pendingUpdate.next;
 		let pending = pendingUpdate.next;
 		do {
 			const updateLane = pending?.lane;
 			if (updateLane === renderLane) {
 				const action = pending?.action;
 				if (action instanceof Function) {
-					result.memoizedState = action(baseState);
-					baseState = action(baseState)
+					result.memoizedState =
+						action(baseState);
+					baseState = action(baseState);
 				} else {
-					baseState = action
+					baseState = action;
 				}
 			} else {
 				if (__DEV__) {
-					console.log('不应该进入这个逻辑')
+					console.log('不应该进入这个逻辑');
 				}
 			}
 			pending = pending?.next as Update<any>;
