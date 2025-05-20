@@ -18,6 +18,7 @@ import {
 	NoLane,
 	NoLanes
 } from './fiberLanes';
+import { Effect } from './fiberHooks';
 
 export class FiberNode {
 	type: any;
@@ -77,6 +78,11 @@ export class FiberNode {
 	}
 }
 
+export interface PendingPassiveEffects {
+	unmount: Effect[];
+	update: Effect[];
+}
+
 export class FiberRootNode {
 	container: Container; // 对应的宿主环境的挂载的节点(window 下是 domElement)
 	current: FiberNode; // 指向 hostRootFiber
@@ -86,7 +92,7 @@ export class FiberRootNode {
 	finishedWork: FiberNode | null;
 	pendingLanes: Lanes; // 所有未被消费的 lane 的集合
 	finishedLane: Lane; // 本次更新消费的 lane
-
+	pendingPassiveEffects: PendingPassiveEffects; // 需要执行的副作用
 	constructor(
 		container: Container,
 		hostRootFiber: FiberNode
@@ -97,6 +103,10 @@ export class FiberRootNode {
 		this.finishedWork = null;
 		this.pendingLanes = NoLanes;
 		this.finishedLane = NoLane;
+		this.pendingPassiveEffects = {
+			unmount: [],
+			update: []
+		};
 	}
 }
 

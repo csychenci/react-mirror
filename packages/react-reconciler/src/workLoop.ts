@@ -5,11 +5,14 @@ import { completeWork } from './completeWork';
 import {
 	createWorkInProgress,
 	FiberNode,
-	FiberRootNode
+	FiberRootNode,
+	PendingPassiveEffects
 } from './fiber';
 import {
+	Flags,
 	MutationMask,
-	NoFlags
+	NoFlags,
+	PassiveMask
 } from './fiberFlags';
 import {
 	getHighestPriorityLane,
@@ -24,9 +27,19 @@ import {
 	scheduleSyncCallback
 } from './syncTaskQueue';
 import { HostRoot } from './workTags';
+import {
+	unstable_scheduleCallback as scheduleCallback,
+	unstable_NormalPriority as NormalPriority
+} from 'scheduler';
+import { Effect } from './fiberHooks';
+import {
+	HookHasEffect,
+	Passive
+} from './hookEffectTags';
 
 let workInProgress: FiberNode | null = null;
 let wipRenderLane: Lane = NoLane;
+let rootDoesHavePassiveEffect = false;
 
 function prepareFreshStack(
 	root: FiberRootNode,
@@ -171,6 +184,24 @@ function commitRoot(root: FiberRootNode) {
 	root.finishedWork = null;
 	root.finishedLane = NoLane;
 	markRootFinished(root, lane);
+	if (
+		(finishedWork.flags & PassiveMask) !==
+			NoFlags ||
+		(finishedWork.subtreeFlags & PassiveMask) !==
+			NoFlags
+	) {
+		// 函数组件存在 需要执行副作用
+		if (!rootDoesHavePassiveEffect) {
+			rootDoesHavePassiveEffect = true;
+			scheduleCallback(NormalPriority, () => {
+				// 执行副作用
+				flushPassiveEffects(
+					root.pendingPassiveEffects
+				);
+				return;
+			});
+		}
+	}
 
 	// 判断是否存在3个子阶段需要执行的操作
 	// 1. root 的 flags 与 root 的 subtreeFlags 是否包含 MutationMask，包含的话就存在这三个子阶段需要执行的操作
@@ -183,12 +214,112 @@ function commitRoot(root: FiberRootNode) {
 	if (subtreeHasFlags || rootHasEffect) {
 		// beforeMutation
 		// Mutation
-		commitMutationEffects(finishedWork);
+		commitMutationEffects(finishedWork, root);
 		root.current = finishedWork;
 		// layout
 	} else {
 		root.current = finishedWork;
 	}
+
+	rootDoesHavePassiveEffect = false;
+	ensureRootIsScheduled(root);
+}
+
+function commitHookEffectList(
+	flags: Flags,
+	lastEffect: Effect,
+	callack: (effect: Effect) => void
+) {
+	let effect = lastEffect.next as Effect;
+	do {
+		if ((effect.tag & flags) === flags) {
+			callack(effect);
+		}
+		effect = effect.next as Effect;
+	} while (effect !== lastEffect.next);
+}
+
+function commitHookEffectListUnmount(
+	flags: Flags,
+	lastEffect: Effect
+) {
+	commitHookEffectList(
+		flags,
+		lastEffect,
+		(effect) => {
+			const destroy = effect.destroy;
+			if (typeof destroy === 'function') {
+				destroy();
+			}
+			effect.tag &= ~HookHasEffect;
+		}
+	);
+}
+
+function commitHookEffectListDestroy(
+	flags: Flags,
+	lastEffect: Effect
+) {
+	commitHookEffectList(
+		flags,
+		lastEffect,
+		(effect) => {
+			const destroy = effect.destroy;
+			if (typeof destroy === 'function') {
+				destroy();
+			}
+		}
+	);
+}
+
+function commitHookEffectListCreate(
+	flags: Flags,
+	lastEffect: Effect
+) {
+	commitHookEffectList(
+		flags,
+		lastEffect,
+		(effect) => {
+			const create = effect.create;
+			if (typeof create === 'function') {
+				effect.destroy = create();
+			}
+		}
+	);
+}
+
+function flushPassiveEffects(
+	pendingPassiveEffects: PendingPassiveEffects
+) {
+	pendingPassiveEffects.unmount.forEach(
+		(effect) => {
+			commitHookEffectListUnmount(
+				Passive,
+				effect
+			);
+		}
+	);
+	pendingPassiveEffects.unmount = [];
+	pendingPassiveEffects.update.forEach(
+		(effect) => {
+			// 要求不仅是 useEffect 的情况下，还需要标记了 HookHasEffect 的情况下才能触发
+			commitHookEffectListDestroy(
+				Passive | HookHasEffect,
+				effect
+			);
+		}
+	);
+	pendingPassiveEffects.update.forEach(
+		(effect) => {
+			// 要求不仅是 useEffect 的情况下，还需要标记了 HookHasEffect 的情况下才能触发
+			commitHookEffectListCreate(
+				Passive | HookHasEffect,
+				effect
+			);
+		}
+	);
+	pendingPassiveEffects.update = [];
+	flushSyncCallbacks();
 }
 
 function workLoop() {
