@@ -3,6 +3,7 @@ import {
 	commitUpdate,
 	Container,
 	insertChildToContainer,
+	Instance,
 	removeChild
 } from 'hostConfig';
 import {
@@ -122,7 +123,7 @@ function commitPassiveEffects(
 			);
 		}
 		root.pendingPassiveEffects[type].push(
-			updateQueue.lastEffect
+			updateQueue.lastEffect!
 		);
 	}
 }
@@ -355,8 +356,8 @@ function insertOrAppendPlacementNodeIntoContainer(
 			);
 		} else {
 			appendChildToContainer(
-				finishedWork.stateNode,
-				hostParent
+				hostParent,
+				finishedWork.stateNode
 			);
 		}
 		return;

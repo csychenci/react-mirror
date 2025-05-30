@@ -25,7 +25,7 @@ export const createInstance = (
 };
 
 export const appendInitialChild = (
-	parent: Instance,
+	parent: Instance | Container,
 	child: Instance
 ) => {
 	parent.appendChild(child);
@@ -37,12 +37,8 @@ export const createTextInstance = (
 	return document.createTextNode(content);
 };
 
-export const appendChildToContainer = (
-	child: Instance,
-	parent: Instance
-) => {
-	parent.appendChild(child);
-};
+export const appendChildToContainer =
+	appendInitialChild;
 
 export const commitUpdate = (
 	fiber: FiberNode
@@ -53,6 +49,11 @@ export const commitUpdate = (
 			return commitTextUpdate(
 				fiber.stateNode,
 				text
+			);
+		case HostComponent:
+			return updateFiberProps(
+				fiber.stateNode,
+				fiber.memoizedProps
 			);
 		default:
 			if (__DEV__) {

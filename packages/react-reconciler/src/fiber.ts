@@ -19,6 +19,7 @@ import {
 	NoLanes
 } from './fiberLanes';
 import { Effect } from './fiberHooks';
+import { CallbackNode } from 'scheduler';
 
 export class FiberNode {
 	type: any;
@@ -93,6 +94,10 @@ export class FiberRootNode {
 	pendingLanes: Lanes; // 所有未被消费的 lane 的集合
 	finishedLane: Lane; // 本次更新消费的 lane
 	pendingPassiveEffects: PendingPassiveEffects; // 需要执行的副作用
+
+	callbackNode: CallbackNode | null;
+	callbackPriority: Lane;
+
 	constructor(
 		container: Container,
 		hostRootFiber: FiberNode
@@ -107,6 +112,8 @@ export class FiberRootNode {
 			unmount: [],
 			update: []
 		};
+		this.callbackNode = null;
+		this.callbackPriority = NoLane;
 	}
 }
 
