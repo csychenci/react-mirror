@@ -8,6 +8,10 @@ export interface Dispatcher {
 		callback: () => void | void,
 		deps: any[] | void
 	) => void;
+	useTransition: () => [
+		boolean,
+		(callback: () => void) => void
+	];
 }
 
 export type Dispatch<State> = (
@@ -22,6 +26,7 @@ const currentDispatcher: {
 
 export const resolveDispatcher =
 	(): Dispatcher => {
+		debugger;
 		const dispatcher = currentDispatcher.current;
 		if (!dispatcher) {
 			throw new Error(

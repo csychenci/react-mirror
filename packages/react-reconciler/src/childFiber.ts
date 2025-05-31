@@ -178,6 +178,10 @@ function ChildReconciler(
 		currentFirstChild: FiberNode | null,
 		newChild: any[]
 	) {
+		console.log(
+			'reconcilerChildrenArray',
+			newChild
+		);
 		// 最后一个可复用 fiber 在 current 中的 index
 		let lastPlacedIndex: number = 0;
 		// 创建的最后一个 fiber
@@ -247,6 +251,8 @@ function ChildReconciler(
 		existingChildren.forEach((fiber) => {
 			deleteChild(returnFiber, fiber);
 		});
+
+		console.log('firstNewFiber', firstNewFiber);
 
 		return firstNewFiber;
 	}

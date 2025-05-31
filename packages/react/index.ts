@@ -2,6 +2,7 @@ import currentDispatcher, {
 	Dispatcher,
 	resolveDispatcher
 } from './src/currentDispatch';
+import currentBatchConfig from './src/currentBatchConfig';
 import { jsx, jsxDEV } from './src/jsx';
 
 export { REACT_FRAGMENT_TYPE as Fragment } from 'shared/ReactSymbols';
@@ -19,10 +20,17 @@ export const useEffect: Dispatcher['useEffect'] =
 		return dispatcher.useEffect(create, deps);
 	};
 
+export const useTransition: Dispatcher['useTransition'] =
+	() => {
+		const dispatcher = resolveDispatcher();
+		return dispatcher.useTransition();
+	};
+
 // 内部数据共享层
 export const __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED =
 	{
-		currentDispatcher
+		currentDispatcher,
+		currentBatchConfig
 	};
 
 export default {

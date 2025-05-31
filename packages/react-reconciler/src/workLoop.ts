@@ -102,9 +102,12 @@ function ensureRootIsScheduled(
 	const prevPriority = root.callbackPriority;
 
 	/**
-	 * ③ 如果当前优先级与之前相同，则不产生新的调度
+	 * ③ 如果当前优先级与之前相同并且当前有正在调度或执行的任务，则不产生新的调度
 	 */
-	if (curPriority === prevPriority) {
+	if (
+		curPriority === prevPriority &&
+		root.callbackNode !== null
+	) {
 		return;
 	}
 
@@ -118,17 +121,19 @@ function ensureRootIsScheduled(
 	// 同步调度不存在 newCallbackNode，只有并发情况下存在
 	let newCallbackNode = null;
 
+	if (__DEV__) {
+		console.log(
+			`在${updateLane === SyncLane ? '微任务' : '宏任务'}中调度优先级：`,
+			updateLane
+		);
+	}
+
 	/**
 	 * ⑤ 同步优先级 用微任务调度
 	 */
 	if (updateLane === SyncLane) {
+		debugger;
 		// 同步优先级 用微任务调度
-		if (__DEV__) {
-			console.log(
-				'在微任务中调度 优先级：',
-				updateLane
-			);
-		}
 		scheduleSyncCallback(
 			performSyncWorkOnRoot.bind(null, root)
 		);
@@ -159,6 +164,10 @@ function markRootUpdated(
 	root.pendingLanes = mergeLanes(
 		root.pendingLanes,
 		lane
+	);
+	console.log(
+		'root.pendingLanes',
+		root.pendingLanes
 	);
 }
 
@@ -361,6 +370,11 @@ function commitRoot(root: FiberRootNode) {
 	root.finishedWork = null;
 	root.finishedLane = NoLane;
 	markRootFinished(root, lane);
+	console.log(
+		'root.pendingLanes',
+		root.pendingLanes,
+		lane
+	);
 	if (
 		(finishedWork.flags & PassiveMask) !==
 			NoFlags ||

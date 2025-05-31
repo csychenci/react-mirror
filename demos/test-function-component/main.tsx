@@ -2,7 +2,7 @@
 // import ReactDOM from 'react-dom/client';
 
 import React, { useState } from 'react';
-import reactNoopRenderer from 'react-dom';
+import ReactDOM from 'react-dom/client';
 
 // // function App(props: { title: string }) {
 // //   console.log("App", props.title)
@@ -92,7 +92,7 @@ function Child({ children }) {
 	return <li>{children}</li>;
 }
 
-const root = reactNoopRenderer.createRoot(
+const root = ReactDOM.createRoot(
 	document.getElementById('root')!
 );
 

@@ -43,6 +43,7 @@ export const completeWork = (wip: FiberNode) => {
 				wip.stateNode = instance;
 			}
 			bubbleProperties(wip);
+			console.log('HostComponent', wip);
 			return null;
 		case HostText:
 			if (current !== null && wip.stateNode) {

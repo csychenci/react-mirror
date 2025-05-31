@@ -56,7 +56,7 @@ export const jsx = (
 	}
 	// if (props.children) {
 	// 	const childrenLength = props.children.length;
-	// 	console.log('maybeChildren', maybeChildren);
+	// 	console.log('maybeChildren', props.children);
 	// 	if (childrenLength) {
 	// 		if (childrenLength === 1) {
 	// 			props.children = props.children[0];

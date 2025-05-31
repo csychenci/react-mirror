@@ -8,6 +8,7 @@
 		"prepare": "husky",
 		"build:dev": "rimraf dist && npx rollup --bundleConfigAsCjs --config scripts/rollup/dev.config.js",
 		"demo:start": "vite serve demos/test-function-component --config scripts/vite/vite.config.js --force",
+		"transition:start": "vite serve demos/transition --config scripts/vite/vite.config.js --force",
 		"test": "jest --config scripts/jest/jest.config.js"
 	},
 	"keywords": [],
