@@ -98,13 +98,15 @@ export function renderWithHooks(
 const HooksDispatcherOnMount: Dispatcher = {
 	useState: mountState,
 	useEffect: mountEffect,
-	useTransition: mountTransition
+	useTransition: mountTransition,
+	useRef: mountRef
 };
 
 const HooksDispatcherOnUpdate: Dispatcher = {
 	useState: updateState,
 	useEffect: updateEffect,
-	useTransition: updateTransition
+	useTransition: updateTransition,
+	useRef: updateRef
 };
 
 function mountEffect(
@@ -231,7 +233,6 @@ function updateState<State>(): [
 	State,
 	Dispatch<State>
 ] {
-	debugger;
 	// 找到当前 useState 对应的 hook 数据
 	const hook = updateWorkInProgressHook();
 	const queue =
@@ -349,6 +350,22 @@ function startTransition(
 	setPending(false);
 	/** 过渡完成以后，还原之前的 transition 状态 */
 	currentBatchConfig.transition = prevTransition;
+}
+
+function mountRef<T>(initialValue: T): {
+	current: T;
+} {
+	const hook = mountWorkInProgressHook();
+	const ref = { current: initialValue };
+	hook.memoizedState = ref;
+	return ref;
+}
+
+function updateRef<T>(initialValue: T): {
+	current: T;
+} {
+	const hook = updateWorkInProgressHook();
+	return hook.memoizedState;
 }
 
 function dispatchSetState<State>(

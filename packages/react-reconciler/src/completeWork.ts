@@ -13,11 +13,19 @@ import {
 	FunctionComponent,
 	Fragment
 } from './workTags';
-import { NoFlags, Update } from './fiberFlags';
+import {
+	NoFlags,
+	Ref,
+	Update
+} from './fiberFlags';
 // import { updateFiberProps } from 'react-dom/src/SyntheticEvent';
 
 function markUpdate(fiber: FiberNode) {
 	fiber.flags |= Update;
+}
+
+function markRef(fiber: FiberNode) {
+	fiber.flags |= Ref;
 }
 
 export const completeWork = (wip: FiberNode) => {
@@ -32,6 +40,9 @@ export const completeWork = (wip: FiberNode) => {
 				// 判断 props 是否变化 {onClick:xx ===> {onClick:xxx
 				// updateFiberProps(wip.stateNode, newProps);
 				markUpdate(wip);
+				if (current.ref !== wip.ref) {
+					markRef(wip);
+				}
 			} else {
 				// 1. 构建 DOM
 				const instance = createInstance(
@@ -41,6 +52,9 @@ export const completeWork = (wip: FiberNode) => {
 				// 2. 将 DOM 插入到 DOM 树中
 				appendAllChildren(instance, wip);
 				wip.stateNode = instance;
+				if (wip.ref !== null) {
+					markRef(wip);
+				}
 			}
 			bubbleProperties(wip);
 			console.log('HostComponent', wip);
@@ -49,7 +63,7 @@ export const completeWork = (wip: FiberNode) => {
 			if (current !== null && wip.stateNode) {
 				// 更新 update
 				const oldText =
-					current.memoizedProps.content;
+					current.memoizedProps?.content;
 				const newText = newProps.content;
 				if (oldText !== newText) {
 					markUpdate(wip);

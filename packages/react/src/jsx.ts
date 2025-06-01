@@ -33,6 +33,7 @@ export const jsx = (
 	config: any,
 	...maybeChildren: any
 ) => {
+	console.log('config', config);
 	let key: Key = null;
 	const props: Props = {};
 	let ref: Ref = null;

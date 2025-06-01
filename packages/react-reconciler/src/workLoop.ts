@@ -1,6 +1,9 @@
 import { scheduleMicroTask } from 'hostConfig';
 import { beginWork } from './beginWork';
-import { commitMutationEffects } from './commitWork';
+import {
+	commitLayoutEffects,
+	commitMutationEffects
+} from './commitWork';
 import { completeWork } from './completeWork';
 import {
 	createWorkInProgress,
@@ -132,7 +135,6 @@ function ensureRootIsScheduled(
 	 * ⑤ 同步优先级 用微任务调度
 	 */
 	if (updateLane === SyncLane) {
-		debugger;
 		// 同步优先级 用微任务调度
 		scheduleSyncCallback(
 			performSyncWorkOnRoot.bind(null, root)
@@ -406,8 +408,10 @@ function commitRoot(root: FiberRootNode) {
 		// beforeMutation
 		// Mutation
 		commitMutationEffects(finishedWork, root);
+		// fiber 树切换
 		root.current = finishedWork;
 		// layout
+		commitLayoutEffects(finishedWork, root);
 	} else {
 		root.current = finishedWork;
 	}

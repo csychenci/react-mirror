@@ -12,6 +12,7 @@ export interface Dispatcher {
 		boolean,
 		(callback: () => void) => void
 	];
+	useRef: <T>(initialValue: T) => { current: T };
 }
 
 export type Dispatch<State> = (
@@ -24,16 +25,14 @@ const currentDispatcher: {
 	current: null
 };
 
-export const resolveDispatcher =
-	(): Dispatcher => {
-		debugger;
-		const dispatcher = currentDispatcher.current;
-		if (!dispatcher) {
-			throw new Error(
-				'hooks 只能在函数式组件中执行'
-			);
-		}
-		return dispatcher;
-	};
+export const resolveDispatcher = (): Dispatcher => {
+	const dispatcher = currentDispatcher.current;
+	if (!dispatcher) {
+		throw new Error(
+			'hooks 只能在函数式组件中执行'
+		);
+	}
+	return dispatcher;
+};
 
 export default currentDispatcher;

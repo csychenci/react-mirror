@@ -15,6 +15,7 @@ import { mountChildFibers } from './childFiber';
 import { reconcileChildFibers } from './childFiber';
 import { renderWithHooks } from './fiberHooks';
 import { Lane } from './fiberLanes';
+import { Ref } from './fiberFlags';
 // 递归中的递阶段
 
 export const beginWork = (
@@ -78,6 +79,7 @@ function updateHostComponent(wip: FiberNode) {
 	const nextProps = wip.pendingProps;
 	const nextChildren = nextProps.children;
 	console.log('nextChildren', nextChildren);
+	markRef(wip.alternate, wip);
 	reconcileChildren(wip, nextChildren);
 	return wip.child;
 }
@@ -114,4 +116,18 @@ function updateFunctionComponent(
 	);
 	reconcileChildren(wip, nextChildren);
 	return wip.child;
+}
+
+function markRef(
+	current: FiberNode | null,
+	workInProgress: FiberNode
+) {
+	const ref = workInProgress.ref;
+	console.log('markRef', current, workInProgress);
+	if (
+		(current === null && ref !== null) ||
+		(current !== null && current.ref !== ref)
+	) {
+		workInProgress.flags |= Ref;
+	}
 }
