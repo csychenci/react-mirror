@@ -5,6 +5,7 @@ import {
 	Ref
 } from 'shared/ReactType';
 import {
+	ContextProvider,
 	Fragment,
 	FunctionComponent,
 	HostComponent,
@@ -20,6 +21,7 @@ import {
 } from './fiberLanes';
 import { Effect } from './fiberHooks';
 import { CallbackNode } from 'scheduler';
+import { REACT_PROVIDER_TYPE } from 'shared/ReactSymbols';
 
 export class FiberNode {
 	type: any;
@@ -160,6 +162,11 @@ export function createFiberFromElement(
 	if (typeof type === 'string') {
 		// 原生标签
 		fiberTag = HostComponent;
+	} else if (
+		typeof type === 'object' &&
+		type.$$typeof === REACT_PROVIDER_TYPE
+	) {
+		fiberTag = ContextProvider;
 	} else if (
 		typeof type !== 'function' &&
 		__DEV__

@@ -9,13 +9,15 @@ import {
 	HostRoot,
 	HostText,
 	FunctionComponent,
-	Fragment
+	Fragment,
+	ContextProvider
 } from './workTags';
 import { mountChildFibers } from './childFiber';
 import { reconcileChildFibers } from './childFiber';
 import { renderWithHooks } from './fiberHooks';
 import { Lane } from './fiberLanes';
 import { Ref } from './fiberFlags';
+import { pushProvider } from './fiberContext';
 // 递归中的递阶段
 
 export const beginWork = (
@@ -37,6 +39,8 @@ export const beginWork = (
 			);
 		case Fragment:
 			return updateFragment(wip);
+		case ContextProvider:
+			return updateContextProvider(wip);
 		default:
 			if (__DEV__) {
 				console.warn('beginWork未实现的类型');
@@ -114,6 +118,17 @@ function updateFunctionComponent(
 		wip,
 		renderLane
 	);
+	reconcileChildren(wip, nextChildren);
+	return wip.child;
+}
+
+function updateContextProvider(wip: FiberNode) {
+	const providerType = wip.type;
+	const context = providerType._context;
+	const newProps = wip.pendingProps;
+	pushProvider(context, newProps.value);
+	const nextChildren = newProps.children;
+	console.log('nextChildren', nextChildren);
 	reconcileChildren(wip, nextChildren);
 	return wip.child;
 }

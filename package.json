@@ -10,6 +10,7 @@
 		"demo:start": "vite serve demos/test-function-component --config scripts/vite/vite.config.js --force",
 		"transition:start": "vite serve demos/transition --config scripts/vite/vite.config.js --force",
 		"ref:start": "vite serve demos/ref --config scripts/vite/vite.config.js --force",
+		"context:start": "vite serve demos/context --config scripts/vite/vite.config.js --force",
 		"test": "jest --config scripts/jest/jest.config.js"
 	},
 	"keywords": [],

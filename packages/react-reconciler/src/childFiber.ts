@@ -263,8 +263,10 @@ function ChildReconciler(
 		index: number,
 		element: any
 	): FiberNode | null {
-		const keyToUse =
-			element?.key !== null ? element.key : index;
+		const keyToUse = getElementKeyToUse(
+			element,
+			index
+		);
 		const before = existingChildren.get(keyToUse);
 		if (
 			typeof element === 'string' ||
@@ -422,6 +424,24 @@ function useFiber(
 	clone.index = 0;
 	clone.sibling = null;
 	return clone;
+}
+
+function getElementKeyToUse(
+	element: any,
+	index?: number
+): Key {
+	if (
+		Array.isArray(element) ||
+		typeof element === 'string' ||
+		typeof element === 'number' ||
+		element === undefined ||
+		element === null
+	) {
+		return index;
+	}
+	return element.key !== null
+		? element.key
+		: index;
 }
 
 function updateFragment(

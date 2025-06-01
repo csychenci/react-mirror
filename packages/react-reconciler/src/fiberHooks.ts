@@ -12,7 +12,10 @@ import {
 	Update,
 	UpdateQueue
 } from './updateQueue';
-import { Action } from 'shared/ReactType';
+import {
+	Action,
+	ReactContext
+} from 'shared/ReactType';
 import { scheduleUpdateOnFiber } from './workLoop';
 import {
 	requestUpdateLane,
@@ -99,14 +102,16 @@ const HooksDispatcherOnMount: Dispatcher = {
 	useState: mountState,
 	useEffect: mountEffect,
 	useTransition: mountTransition,
-	useRef: mountRef
+	useRef: mountRef,
+	useContext: readContext
 };
 
 const HooksDispatcherOnUpdate: Dispatcher = {
 	useState: updateState,
 	useEffect: updateEffect,
 	useTransition: updateTransition,
-	useRef: updateRef
+	useRef: updateRef,
+	useContext: readContext
 };
 
 function mountEffect(
@@ -467,4 +472,17 @@ function updateWorkInProgressHook(): Hook {
 	}
 
 	return workInProgressHook;
+}
+
+function readContext<T>(
+	context: ReactContext<T>
+): T {
+	const consumer = currentlyRenderingFiber;
+	if (consumer === null) {
+		throw new Error(
+			'useContext 必须在函数组件中调用'
+		);
+	}
+	const value = context._currentValue;
+	return value;
 }

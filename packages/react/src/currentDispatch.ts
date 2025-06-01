@@ -1,4 +1,7 @@
-import { Action } from 'shared/ReactType';
+import {
+	Action,
+	ReactContext
+} from 'shared/ReactType';
 
 export interface Dispatcher {
 	useState: <T>(
@@ -13,6 +16,7 @@ export interface Dispatcher {
 		(callback: () => void) => void
 	];
 	useRef: <T>(initialValue: T) => { current: T };
+	useContext: <T>(context: ReactContext<T>) => T;
 }
 
 export type Dispatch<State> = (
@@ -25,14 +29,15 @@ const currentDispatcher: {
 	current: null
 };
 
-export const resolveDispatcher = (): Dispatcher => {
-	const dispatcher = currentDispatcher.current;
-	if (!dispatcher) {
-		throw new Error(
-			'hooks 只能在函数式组件中执行'
-		);
-	}
-	return dispatcher;
-};
+export const resolveDispatcher =
+	(): Dispatcher => {
+		const dispatcher = currentDispatcher.current;
+		if (!dispatcher) {
+			throw new Error(
+				'hooks 只能在函数式组件中执行'
+			);
+		}
+		return dispatcher;
+	};
 
 export default currentDispatcher;
