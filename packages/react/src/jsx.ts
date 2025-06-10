@@ -66,16 +66,16 @@ export const jsx = (
 	// 		}
 	// 	}
 	// }
-	const maybeChildrenLength =
-		maybeChildren.length;
-	console.log('maybeChildren', maybeChildren);
-	if (maybeChildrenLength) {
-		if (maybeChildrenLength === 1) {
-			props.children = maybeChildren[0];
-		} else {
-			props.children = maybeChildren;
-		}
-	}
+	// const maybeChildrenLength =
+	// 	maybeChildren.length;
+	// console.log('maybeChildren', maybeChildren);
+	// if (maybeChildrenLength) {
+	// 	if (maybeChildrenLength === 1) {
+	// 		props.children = maybeChildren[0];
+	// 	} else {
+	// 		props.children = maybeChildren;
+	// 	}
+	// }
 	return ReactElement(type, key, ref, props);
 };
 
