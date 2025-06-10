@@ -168,7 +168,7 @@ function ChildReconciler(
 		) {
 			// shouldTrackSideEffects： 应该追逐副作用
 			// fiber.alternate === null： 当前是首屏渲染的情况
-			fiber.flags = Placement;
+			fiber.flags |= Placement;
 		}
 		return fiber;
 	}
